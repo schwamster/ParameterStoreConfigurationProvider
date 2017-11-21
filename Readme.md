@@ -1,7 +1,5 @@
 
-# ParameterStoreConfigurationProvider
-
-[![NuGet](https://img.shields.io/nuget/v/Nuget.Core.svg)](https://www.nuget.org/packages/ParameterStoreConfigurationProvider/)
+# ParameterStoreConfigurationProvider [![NPM version][npm-image]][npm-url]
 
 Enrich your configuration with plain text or secure settings from AWS ParameterStore.
 
@@ -60,3 +58,6 @@ in the example above (see http://docs.aws.amazon.com/cli/latest/userguide/cli-ch
 # ParameterStore on AWS
 
 see: http://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-paramstore.html
+
+[npm-image]: https://badge.fury.io/js/ParameterStoreConfigurationProvider.svg
+[npm-url]: https://npmjs.org/package/ParameterStoreConfigurationProvider
