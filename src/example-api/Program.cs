@@ -7,6 +7,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using ParameterStoreConfigurationProvider;
 
 namespace example_api
 {
@@ -19,14 +20,34 @@ namespace example_api
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddEnvironmentVariables();
-            var config = builder.Build();
-
+            
             return WebHost.CreateDefaultBuilder(args)
-                    .UseConfiguration(config)
+                    .ConfigureAppConfiguration((hostContext, config)=>
+                    {
+                        config.SetBasePath(Directory.GetCurrentDirectory())
+                        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                        .AddEnvironmentVariables()
+                        .AddParameterStoreConfig(parameterStoreConfig =>
+                        {
+                            parameterStoreConfig.ParameterMapping = new List<ParameterMapping>()
+                            {
+                                new ParameterMapping(){ AwsName = "/somenamespace/somekey", SettingName = "somekey"},
+                                new ParameterMapping(){ AwsName = "/somenamespace/someotherkey", SettingName = "someotherkey"},
+                            };
+                            parameterStoreConfig.Region = "eu-west-1";
+                            parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                        })
+                        .AddParameterStoreConfig(parameterStoreConfig =>
+                        {
+                            parameterStoreConfig.ParameterMapping = new List<ParameterMapping>()
+                            {
+                                new ParameterMapping(){ AwsName = "/somenamespace/somesecurekey", SettingName = "somesecurekey"}
+                            };
+                            parameterStoreConfig.WithDecryption = true;
+                            parameterStoreConfig.Region = "eu-west-1";
+                            parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                        });
+                    })
                     .UseStartup<Startup>()
                     .Build();
         }

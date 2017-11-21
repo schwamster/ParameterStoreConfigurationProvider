@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\example-api\example-api.csproj" />
+    <ProjectReference Include="..\..\src\ParameterStoreConfigurationProvider\ParameterStoreConfigurationProvider.csproj" />
   </ItemGroup>
 
 </Project>
