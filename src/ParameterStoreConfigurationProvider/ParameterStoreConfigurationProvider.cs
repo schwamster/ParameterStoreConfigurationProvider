@@ -17,20 +17,39 @@ namespace ParameterStoreConfigurationProvider
 
         public override void Load()
         {
-            using (var client = new AmazonSimpleSystemsManagementClient(this.configurationSource.AwsCredential, Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
+            if (this.configurationSource.UseDefaultCredentials)
             {
-                var request = new GetParametersRequest()
+                using (var client = new AmazonSimpleSystemsManagementClient(Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
                 {
-                    Names = this.configurationSource.ParameterMapping.Select(x => x.AwsName).ToList(),
-                    WithDecryption = this.configurationSource.WithDecryption
-                };
+                    var request = new GetParametersRequest()
+                    {
+                        Names = this.configurationSource.ParameterMapping.Select(x => x.AwsName).ToList(),
+                        WithDecryption = this.configurationSource.WithDecryption
+                    };
 
-                var response = client.GetParametersAsync(request).Result;
+                    var response = client.GetParametersAsync(request).Result;
 
-                this.Data = response.Parameters.ToDictionary(
-                    x => this.configurationSource.ParameterMapping.First(pm => pm.AwsName == x.Name).SettingName,
-                    x => x.Value);
+                    this.Data = response.Parameters.ToDictionary(
+                        x => this.configurationSource.ParameterMapping.First(pm => pm.AwsName == x.Name).SettingName,
+                        x => x.Value);
+                }
+            }
+            else
+            {
+                using (var client = new AmazonSimpleSystemsManagementClient(this.configurationSource.AwsCredential, Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
+                {
+                    var request = new GetParametersRequest()
+                    {
+                        Names = this.configurationSource.ParameterMapping.Select(x => x.AwsName).ToList(),
+                        WithDecryption = this.configurationSource.WithDecryption
+                    };
 
+                    var response = client.GetParametersAsync(request).Result;
+
+                    this.Data = response.Parameters.ToDictionary(
+                        x => this.configurationSource.ParameterMapping.First(pm => pm.AwsName == x.Name).SettingName,
+                        x => x.Value);
+                }
             }
         }
     }

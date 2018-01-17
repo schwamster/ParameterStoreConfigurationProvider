@@ -41,6 +41,9 @@ Example configuration for a asp.net core project:
                     .Build();
         }
 
+# Alternatively
+You can also use parameterStoreConfig.UseDefaultCredentials = true; to let AWS handle this.
+
 # Finding your way in the solution
 
 in /src you find two projects, one example-api and the src for the nuget package itself

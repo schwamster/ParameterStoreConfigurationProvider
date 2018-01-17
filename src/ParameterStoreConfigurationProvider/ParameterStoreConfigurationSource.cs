@@ -8,6 +8,8 @@ namespace ParameterStoreConfigurationProvider
     {
         public AWSCredentials AwsCredential { get; set; }
 
+        public bool UseDefaultCredentials { get; set; }
+
         public string Region { get; set; }
 
         public bool WithDecryption { get; set; }
