@@ -35,7 +35,8 @@ namespace example_api
                                 new ParameterMapping(){ AwsName = "/somenamespace/someotherkey", SettingName = "someotherkey"},
                             };
                             parameterStoreConfig.Region = "eu-west-1";
-                            parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                            parameterStoreConfig.UseDefaultCredentials = true;
+                       //   parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
                         })
                         .AddParameterStoreConfig(parameterStoreConfig =>
                         {
@@ -45,7 +46,8 @@ namespace example_api
                             };
                             parameterStoreConfig.WithDecryption = true;
                             parameterStoreConfig.Region = "eu-west-1";
-                            parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                            parameterStoreConfig.UseDefaultCredentials = true;
+                        //    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
                         });
                     })
                     .UseStartup<Startup>()
