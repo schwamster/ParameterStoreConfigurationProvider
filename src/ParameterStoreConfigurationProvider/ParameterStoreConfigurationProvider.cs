@@ -3,6 +3,7 @@ using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
+using System;
 
 namespace ParameterStoreConfigurationProvider
 {
@@ -16,9 +17,10 @@ namespace ParameterStoreConfigurationProvider
             this.configurationSource = configurationSource;
         }
 
+
+
         public override void Load()
         {
-            GetParametersRequest request = PrepareRequest();
 
             GetParametersResponse response;
 
@@ -26,9 +28,7 @@ namespace ParameterStoreConfigurationProvider
             {
                 using (var client = new AmazonSimpleSystemsManagementClient(Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
                 {
-
-
-                    response = client.GetParametersAsync(request).Result;
+                  response = MappingClientResponseToData(client);
                 }
             }
             else
@@ -36,11 +36,41 @@ namespace ParameterStoreConfigurationProvider
                 using (var client = new AmazonSimpleSystemsManagementClient(this.configurationSource.AwsCredential, Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
                 {
 
-                    response = client.GetParametersAsync(request).Result;
+                    response = MappingClientResponseToData(client);
                 }
             }
 
             MapResult(response);
+        }
+
+        private GetParametersResponse MappingClientResponseToData(AmazonSimpleSystemsManagementClient client)
+        {
+            GetParametersRequest request = PrepareRequest();
+            GetParametersResponse response;
+            try
+            {
+                response = client.GetParametersAsync(request).Result;
+                CheckParametersValidity(response);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+            return response;
+        }
+
+        private void CheckParametersValidity(GetParametersResponse response)
+        {
+            if (response.InvalidParameters.Count > 0)
+            {
+                String wrongParams = "";
+                foreach (var item in response.InvalidParameters)
+                {
+                    wrongParams = item + " ";
+                }
+
+                throw new Exception("You have requested invalid parameters " + wrongParams);
+            }
         }
 
         internal GetParametersRequest PrepareRequest()
