@@ -2,8 +2,8 @@
 using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
-using System.Threading.Tasks;
 using System;
+using System.Collections.Generic;
 
 namespace ParameterStoreConfigurationProvider
 {
@@ -17,18 +17,15 @@ namespace ParameterStoreConfigurationProvider
             this.configurationSource = configurationSource;
         }
 
-
-
         public override void Load()
         {
-
-            GetParametersResponse response;
+            IEnumerable<GetParametersResponse> responses;
 
             if (this.configurationSource.UseDefaultCredentials)
             {
                 using (var client = new AmazonSimpleSystemsManagementClient(Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
                 {
-                  response = MappingClientResponseToData(client);
+                    responses = MappingClientResponseToData(client);
                 }
             }
             else
@@ -36,27 +33,26 @@ namespace ParameterStoreConfigurationProvider
                 using (var client = new AmazonSimpleSystemsManagementClient(this.configurationSource.AwsCredential, Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
                 {
 
-                    response = MappingClientResponseToData(client);
+                    responses = MappingClientResponseToData(client);
                 }
             }
 
-            MapResult(response);
+            MapResults(responses);
         }
 
-        private GetParametersResponse MappingClientResponseToData(AmazonSimpleSystemsManagementClient client)
+        private IEnumerable<GetParametersResponse> MappingClientResponseToData(AmazonSimpleSystemsManagementClient client)
         {
-            GetParametersRequest request = PrepareRequest();
-            GetParametersResponse response;
-            try
+            IEnumerable<GetParametersRequest> requests = PrepareRequests();
+            IList<GetParametersResponse> responses = new List<GetParametersResponse>();
+
+            foreach (var request in requests)
             {
-                response = client.GetParametersAsync(request).Result;
+                var response = client.GetParametersAsync(request).Result;
                 CheckParametersValidity(response);
+                responses.Add(response);
             }
-            catch (Exception e)
-            {
-                throw e;
-            }
-            return response;
+
+            return responses;
         }
 
         private void CheckParametersValidity(GetParametersResponse response)
@@ -73,20 +69,31 @@ namespace ParameterStoreConfigurationProvider
             }
         }
 
-        internal GetParametersRequest PrepareRequest()
+        internal IEnumerable<GetParametersRequest> PrepareRequests()
         {
-            return new GetParametersRequest()
-            {
-                Names = this.configurationSource.ParameterMapping.Select(x => x.AwsName).ToList(),
-                WithDecryption = this.configurationSource.WithDecryption
-            };
+            var names = this.configurationSource.ParameterMapping.Select(x => x.AwsName).ToList();
+            const int groupSize = 10;
+
+            var requests = names
+                .Select((x, i) => new { Item = x, Index = i })
+                .GroupBy(x => x.Index / groupSize, x => x.Item)
+                .Select(g => new GetParametersRequest
+                {
+                    Names = g.ToList(),
+                    WithDecryption = this.configurationSource.WithDecryption
+                });
+
+            return requests;
         }
 
-        internal void MapResult(GetParametersResponse response)
+        internal void MapResults(IEnumerable<GetParametersResponse> responses)
         {
-            this.Data = response.Parameters.ToDictionary(
-                                    x => this.configurationSource.ParameterMapping.First(pm => pm.AwsName == x.Name).SettingName,
-                                    x => x.Value);
+            foreach (var response in responses)
+            {
+                this.Data = response.Parameters.ToDictionary(
+                    x => this.configurationSource.ParameterMapping.First(pm => pm.AwsName == x.Name).SettingName,
+                    x => x.Value);
+            }
         }
     }
 }
