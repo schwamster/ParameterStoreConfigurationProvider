@@ -88,11 +88,16 @@ namespace ParameterStoreConfigurationProvider
 
         internal void MapResults(IEnumerable<GetParametersResponse> responses)
         {
+            this.Data = new Dictionary<string, string>();
+
             foreach (var response in responses)
             {
-                this.Data = response.Parameters.ToDictionary(
-                    x => this.configurationSource.ParameterMapping.First(pm => pm.AwsName == x.Name).SettingName,
-                    x => x.Value);
+                foreach (var parameter in response.Parameters)
+                {
+                    var key = this.configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter.Name).SettingName;
+                    var value = parameter.Value;
+                    this.Data[key] = value;
+                }
             }
         }
     }
