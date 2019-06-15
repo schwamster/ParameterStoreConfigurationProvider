@@ -57,15 +57,18 @@ namespace ParameterStoreConfigurationProvider
 
         private void CheckParametersValidity(GetParametersResponse response)
         {
-            if (response.InvalidParameters.Count > 0)
+            var requiredInvalidParameters = response.InvalidParameters.Where(item =>
+                this.configurationSource.ParameterMapping.First(pm =>
+                    pm.AwsName == item).Optional == false).ToList();
+            if (requiredInvalidParameters.Count > 0)
             {
-                String wrongParams = "";
-                foreach (var item in response.InvalidParameters)
+                var wrongParams = "";
+                foreach (var item in requiredInvalidParameters)
                 {
-                    wrongParams = item + " ";
+                    wrongParams += item + " ";
                 }
 
-                throw new Exception("You have requested invalid parameters " + wrongParams);
+                throw new Exception("You have requested invalid parameters: " + wrongParams);
             }
         }
 
@@ -94,9 +97,16 @@ namespace ParameterStoreConfigurationProvider
             {
                 foreach (var parameter in response.Parameters)
                 {
-                    var key = this.configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter.Name).SettingName;
-                    var value = parameter.Value;
-                    this.Data[key] = value;
+                    var parameterMapping =
+                        this.configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter.Name);
+                    this.Data[parameterMapping.SettingName] = parameter.Value;
+                }
+
+                foreach (var parameter in response.InvalidParameters)
+                {
+                    var parameterMapping =
+                        this.configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter);
+                    this.Data[parameterMapping.SettingName] = parameterMapping.Default;
                 }
             }
         }
