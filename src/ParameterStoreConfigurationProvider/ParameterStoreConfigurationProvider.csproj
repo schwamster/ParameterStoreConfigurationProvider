@@ -8,7 +8,7 @@
     <PackageLicenseUrl>https://github.com/schwamster/ParameterStoreConfigurationProvider/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright>Bastian Töpfer</Copyright>
     <PackageTags>AWS ParameterStore Configuration</PackageTags>
-    <Version>1.0.4</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
