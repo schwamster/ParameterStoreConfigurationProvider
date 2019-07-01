@@ -23,7 +23,7 @@ namespace example_api.Controllers
         {
             var value = configuration[key];
             Console.WriteLine($"configuration: {value}");
-            return value;
+            return value ?? "***ValueWasNull***";
         }
     }
 }
