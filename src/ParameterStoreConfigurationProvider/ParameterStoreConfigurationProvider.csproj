@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
@@ -8,7 +8,7 @@
     <PackageLicenseUrl>https://github.com/schwamster/ParameterStoreConfigurationProvider/blob/master/LICENSE</PackageLicenseUrl>
     <Copyright>Bastian Töpfer</Copyright>
     <PackageTags>AWS ParameterStore Configuration</PackageTags>
-    <Version>1.0.5</Version>
+    <Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
