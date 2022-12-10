@@ -100,7 +100,7 @@ namespace example_api_test
                         }
                     };
                     parameterStoreConfig.Region = "eu-west-1";
-                    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                    parameterStoreConfig.UseDefaultCredentials = true;
                 })
                 .AddParameterStoreConfig(parameterStoreConfig =>
                 {
@@ -127,7 +127,7 @@ namespace example_api_test
                     };
                     parameterStoreConfig.WithDecryption = true;
                     parameterStoreConfig.Region = "eu-west-1";
-                    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                    parameterStoreConfig.UseDefaultCredentials = true;
                 });
             var config = builder.Build();
 
@@ -172,7 +172,7 @@ namespace example_api_test
                     };
                     parameterStoreConfig.WithDecryption = true;
                     parameterStoreConfig.Region = "eu-west-1";
-                    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                    parameterStoreConfig.UseDefaultCredentials = true;
                 });
             var config = builder.Build();
 
