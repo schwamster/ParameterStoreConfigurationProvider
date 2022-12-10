@@ -7,10 +7,9 @@ Enrich your configuration with plain text or secure settings from AWS ParameterS
 
 Example configuration for an ASP.Net Core project:
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IHost BuildHost(string[] args)
         {
-
-            return WebHost.CreateDefaultBuilder(args)
+            return Host.CreateDefaultBuilder(args)
                     .ConfigureAppConfiguration((hostContext, config) =>
                     {
                         config.SetBasePath(Directory.GetCurrentDirectory())
@@ -37,7 +36,10 @@ Example configuration for an ASP.Net Core project:
                             parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
                         });
                     })
-                    .UseStartup<Startup>()
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>();
+                    })
                     .Build();
         }
 
