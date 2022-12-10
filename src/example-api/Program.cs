@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using ParameterStoreConfigurationProvider;
 
 namespace example_api
@@ -20,9 +16,8 @@ namespace example_api
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            
             return WebHost.CreateDefaultBuilder(args)
-                    .ConfigureAppConfiguration((hostContext, config)=>
+                    .ConfigureAppConfiguration((hostContext, config) =>
                     {
                         config.SetBasePath(Directory.GetCurrentDirectory())
                         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
