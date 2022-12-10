@@ -9,7 +9,7 @@ Example configuration for a asp.net core project:
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            
+
             return WebHost.CreateDefaultBuilder(args)
                     .ConfigureAppConfiguration((hostContext, config)=>
                     {
@@ -42,6 +42,7 @@ Example configuration for a asp.net core project:
         }
 
 # Alternatively
+
 You can also use parameterStoreConfig.UseDefaultCredentials = true; to let AWS handle this.
 
 # Finding your way in the solution
@@ -55,7 +56,7 @@ To use the provided samples you have to will have to setup 3 parameters in the P
 /somenamespace/someotherkey
 /somenamespace/somesecurekey => This needs to be set up as a secure string, which requires a KMS-Encryption key
 
-You will also have set up and save a local default aws profile on the computer if you want to use StoredProfileAWSCredentials as it is used 
+You will also have set up and save a local default aws profile on the computer if you want to use StoredProfileAWSCredentials as it is used
 in the example above (see http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
 
 # ParameterStore on AWS

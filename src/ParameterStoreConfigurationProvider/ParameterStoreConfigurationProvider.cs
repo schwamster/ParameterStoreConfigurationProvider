@@ -1,9 +1,9 @@
-﻿using Amazon.SimpleSystemsManagement;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Amazon.SimpleSystemsManagement;
 using Amazon.SimpleSystemsManagement.Model;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
-using System;
-using System.Collections.Generic;
 
 namespace ParameterStoreConfigurationProvider
 {
@@ -32,7 +32,6 @@ namespace ParameterStoreConfigurationProvider
             {
                 using (var client = new AmazonSimpleSystemsManagementClient(this.configurationSource.AwsCredential, Amazon.RegionEndpoint.GetBySystemName(this.configurationSource.Region)))
                 {
-
                     responses = MappingClientResponseToData(client);
                 }
             }
