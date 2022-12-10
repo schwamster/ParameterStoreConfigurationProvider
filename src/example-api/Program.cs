@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using ParameterStoreConfigurationProvider;
 
 namespace example_api
@@ -11,12 +11,12 @@ namespace example_api
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            BuildHost(args).Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args)
+        public static IHost BuildHost(string[] args)
         {
-            return WebHost.CreateDefaultBuilder(args)
+            return Host.CreateDefaultBuilder(args)
                     .ConfigureAppConfiguration((hostContext, config) =>
                     {
                         config.SetBasePath(Directory.GetCurrentDirectory())
@@ -31,7 +31,7 @@ namespace example_api
                             };
                             parameterStoreConfig.Region = "eu-west-1";
                             parameterStoreConfig.UseDefaultCredentials = true;
-                       //   parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                            //   parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
                         })
                         .AddParameterStoreConfig(parameterStoreConfig =>
                         {
@@ -42,10 +42,13 @@ namespace example_api
                             parameterStoreConfig.WithDecryption = true;
                             parameterStoreConfig.Region = "eu-west-1";
                             parameterStoreConfig.UseDefaultCredentials = true;
-                        //    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                            //    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
                         });
                     })
-                    .UseStartup<Startup>()
+                    .ConfigureWebHostDefaults(webBuilder =>
+                    {
+                        webBuilder.UseStartup<Startup>();
+                    })
                     .Build();
         }
     }

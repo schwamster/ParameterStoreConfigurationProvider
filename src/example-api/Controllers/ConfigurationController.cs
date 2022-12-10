@@ -4,21 +4,22 @@ using Microsoft.Extensions.Configuration;
 
 namespace example_api.Controllers
 {
-    [Route("api/[controller]")]
-    public class ConfigurationController : Controller
+    [ApiController]
+    [Route("[controller]")]
+    public class ConfigurationController : ControllerBase
     {
-        private readonly IConfiguration configuration;
+        private readonly IConfiguration _configuration;
 
         public ConfigurationController(IConfiguration configuration)
         {
-            this.configuration = configuration;
+            _configuration = configuration;
         }
 
-        // GET api/values/5
+        // GET Configuration/key
         [HttpGet("{key}")]
         public string Get(string key)
         {
-            var value = configuration[key];
+            var value = _configuration[key];
             Console.WriteLine($"configuration: {value}");
             return value ?? "***ValueWasNull***";
         }
