@@ -8,18 +8,18 @@ namespace example_api.Controllers
     [Route("[controller]")]
     public class ConfigurationController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        private readonly IConfiguration configuration;
 
         public ConfigurationController(IConfiguration configuration)
         {
-            _configuration = configuration;
+            this.configuration = configuration;
         }
 
         // GET Configuration/key
         [HttpGet("{key}")]
         public string Get(string key)
         {
-            var value = _configuration[key];
+            var value = configuration[key];
             Console.WriteLine($"configuration: {value}");
             return value ?? "***ValueWasNull***";
         }

@@ -9,27 +9,27 @@ namespace ParameterStoreConfigurationProvider
 {
     public class ParameterStoreConfigurationProvider : ConfigurationProvider
     {
-        private readonly ParameterStoreConfigurationSource _configurationSource;
+        private readonly ParameterStoreConfigurationSource configurationSource;
 
         public ParameterStoreConfigurationProvider(ParameterStoreConfigurationSource configurationSource)
         {
-            _configurationSource = configurationSource;
+            this.configurationSource = configurationSource;
         }
 
         public override void Load()
         {
             IEnumerable<GetParametersResponse> responses;
 
-            if (_configurationSource.UseDefaultCredentials)
+            if (configurationSource.UseDefaultCredentials)
             {
-                using (var client = new AmazonSimpleSystemsManagementClient(Amazon.RegionEndpoint.GetBySystemName(_configurationSource.Region)))
+                using (var client = new AmazonSimpleSystemsManagementClient(Amazon.RegionEndpoint.GetBySystemName(configurationSource.Region)))
                 {
                     responses = MappingClientResponseToData(client);
                 }
             }
             else
             {
-                using (var client = new AmazonSimpleSystemsManagementClient(_configurationSource.AwsCredential, Amazon.RegionEndpoint.GetBySystemName(_configurationSource.Region)))
+                using (var client = new AmazonSimpleSystemsManagementClient(configurationSource.AwsCredential, Amazon.RegionEndpoint.GetBySystemName(configurationSource.Region)))
                 {
                     responses = MappingClientResponseToData(client);
                 }
@@ -56,7 +56,7 @@ namespace ParameterStoreConfigurationProvider
         private void CheckParametersValidity(GetParametersResponse response)
         {
             var requiredInvalidParameters = response.InvalidParameters.Where(item =>
-                _configurationSource.ParameterMapping.First(pm =>
+                configurationSource.ParameterMapping.First(pm =>
                     pm.AwsName == item).Optional == false).ToList();
 
             if (requiredInvalidParameters.Count > 0)
@@ -73,7 +73,7 @@ namespace ParameterStoreConfigurationProvider
 
         private IEnumerable<GetParametersRequest> PrepareRequests()
         {
-            var names = _configurationSource.ParameterMapping.Select(x => x.AwsName).ToList();
+            var names = configurationSource.ParameterMapping.Select(x => x.AwsName).ToList();
             const int groupSize = 10;
 
             var requests = names
@@ -82,7 +82,7 @@ namespace ParameterStoreConfigurationProvider
                 .Select(g => new GetParametersRequest
                 {
                     Names = g.ToList(),
-                    WithDecryption = _configurationSource.WithDecryption
+                    WithDecryption = configurationSource.WithDecryption
                 });
 
             return requests;
@@ -97,14 +97,14 @@ namespace ParameterStoreConfigurationProvider
                 foreach (var parameter in response.Parameters)
                 {
                     var parameterMapping =
-                        _configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter.Name);
+                        configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter.Name);
                     Data[parameterMapping.SettingName] = parameter.Value;
                 }
 
                 foreach (var parameter in response.InvalidParameters)
                 {
                     var parameterMapping =
-                        _configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter);
+                        configurationSource.ParameterMapping.First(pm => pm.AwsName == parameter);
                     Data[parameterMapping.SettingName] = parameterMapping.Default;
                 }
             }
