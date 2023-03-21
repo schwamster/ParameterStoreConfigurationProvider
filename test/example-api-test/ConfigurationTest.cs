@@ -21,7 +21,7 @@ namespace example_api_test
         {
             // Act
             SetupValidServer();
-            var response = await _client.GetAsync("/api/Configuration/somekey");
+            var response = await _client.GetAsync("/Configuration/somekey");
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -36,7 +36,7 @@ namespace example_api_test
         {
             // Act
             SetupValidServer();
-            var response = await _client.GetAsync("/api/Configuration/somesecurekey");
+            var response = await _client.GetAsync("/Configuration/somesecurekey");
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -50,7 +50,7 @@ namespace example_api_test
         {
             // Act
             SetupValidServer();
-            var response = await _client.GetAsync("/api/Configuration/nonexistantkey");
+            var response = await _client.GetAsync("/Configuration/nonexistantkey");
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -64,7 +64,7 @@ namespace example_api_test
         {
             // Act
             SetupValidServer();
-            var response = await _client.GetAsync("/api/Configuration/anothernonexistantkey");
+            var response = await _client.GetAsync("/Configuration/anothernonexistantkey");
             response.EnsureSuccessStatusCode();
 
             var responseString = await response.Content.ReadAsStringAsync();
@@ -100,7 +100,7 @@ namespace example_api_test
                         }
                     };
                     parameterStoreConfig.Region = "eu-west-1";
-                    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                    parameterStoreConfig.UseDefaultCredentials = true;
                 })
                 .AddParameterStoreConfig(parameterStoreConfig =>
                 {
@@ -127,7 +127,7 @@ namespace example_api_test
                     };
                     parameterStoreConfig.WithDecryption = true;
                     parameterStoreConfig.Region = "eu-west-1";
-                    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                    parameterStoreConfig.UseDefaultCredentials = true;
                 });
             var config = builder.Build();
 
@@ -172,7 +172,7 @@ namespace example_api_test
                     };
                     parameterStoreConfig.WithDecryption = true;
                     parameterStoreConfig.Region = "eu-west-1";
-                    parameterStoreConfig.AwsCredential = new Amazon.Runtime.StoredProfileAWSCredentials();
+                    parameterStoreConfig.UseDefaultCredentials = true;
                 });
             var config = builder.Build();
 

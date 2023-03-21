@@ -1,6 +1,6 @@
-﻿using Amazon.Runtime;
+﻿using System.Collections.Generic;
+using Amazon.Runtime;
 using Microsoft.Extensions.Configuration;
-using System.Collections.Generic;
 
 namespace ParameterStoreConfigurationProvider
 {
